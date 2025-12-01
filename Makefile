@@ -106,7 +106,7 @@ CFLAGS += -DUSING_FPS_INDICATOR_DIRECTIVE=$(USING_FPS_INDICATOR_DIRECTIVE)
 #---------------------------------------------------------------------------------
 
 
-CXXFLAGS := $(CFLAGS) -std=c++26 -Wno-dangling-else -ffast-math -fno-unwind-tables -fno-asynchronous-unwind-tables 
+CXXFLAGS := $(CFLAGS) -std=c++26 -Wno-dangling-else -ffast-math -fno-unwind-tables -fno-asynchronous-unwind-tables
 
 ASFLAGS := $(ARCH)
 LDFLAGS += -specs=$(DEVKITPRO)/libnx/switch.specs $(ARCH) -Wl,-Map,$(notdir $*.map)
@@ -257,9 +257,10 @@ $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile MAKEFLAGS="$(filter-out -j% -j,$(MAKEFLAGS)) -j"
 
-	@rm -rf out/
-	@mkdir -p out/switch/.overlays/
-	@cp $(CURDIR)/$(TARGET).ovl out/switch/.overlays/$(TARGET).ovl
+	@rm -rf $(CURDIR)/out/
+	@mkdir -p $(CURDIR)/out/switch/.overlays/
+	@cp $(CURDIR)/$(TARGET).ovl $(CURDIR)/out/switch/.overlays/$(TARGET).ovl
+	@cd $(CURDIR); zip -r -q -9 $(APP_TITLE).zip switch; cd $(CURDIR)
 
 #---------------------------------------------------------------------------------
 clean:
@@ -285,7 +286,7 @@ DEPENDS := $(OFILES:.o=.d)
 #---------------------------------------------------------------------------------
 all : $(OUTPUT).ovl
 
-$(OUTPUT).ovl: $(OUTPUT).elf $(OUTPUT).nacp 
+$(OUTPUT).ovl: $(OUTPUT).elf $(OUTPUT).nacp
 	@elf2nro $< $@ $(NROFLAGS)
 	@echo "built ... $(notdir $(OUTPUT).ovl)"
 	@printf 'ULTR' >> $@
